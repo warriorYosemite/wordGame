@@ -18,6 +18,13 @@ USING_NS_CC;
 
 class GameLayer : public cocos2d::Layer
 {
+    
+private:
+    int m_wordSize;
+    bool m_isPause;
+    int m_pauseTime;
+    ResultState m_answerState;
+    
 public:
     static cocos2d::Scene* createScene();
     
@@ -49,23 +56,28 @@ public:
     void updateAnswerBlock(std::string ansStr);
     void removeLetterFromAnswer(char letter);
     void resetAnswerBlock();
+    void resetSelectedQuestionAlphabet();
     void fillQuestionsVector();
     void createTimer();
     void prepareNextQuestion();
     void handleGameOver();
     bool checkAnswer();
+    void checkAnswerAndAnimate();
     void updateOnCorrectAnswer();
     void correctAnswerAnimation();
     void wrongAnswerAnimation();
     void showPopUp(std::string message);
     void createPopUp();
-    void okButtonCallback(Ref* pSender);
-    
+    int getGameWordSize();
+    void setGameWordSize(int size);
     void reduceTimer(float dt);
+    void pauseOnAnimation(float dt);
+    void proceedGameAccordingToGameState();
     
     
     void questionAlphabetCallback(Ref* pSender);
     void answerAlphabetCallback(Ref* pSender);
+    void okButtonCallback(Ref* pSender);
     // implement the "static create()" method manually
     CREATE_FUNC(GameLayer);
 };

@@ -40,7 +40,10 @@ bool GameLayer::init()
     
     m_visibleSize = Director::getInstance()->getVisibleSize();
     Vec2 origin = Director::getInstance()->getVisibleOrigin();
-    
+    m_wordSize = 4; //default
+    m_isPause = false;
+    m_pauseTime = 1;
+    m_answerState = NO_RESULT;
     return true;
 }
 
@@ -63,8 +66,8 @@ void GameLayer::onEnter()
     createAnswerBlocks();
     createTimer();
     prepareNextQuestion();
-//    createPopUp();
-//    this->schedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer), 1);
+    createPopUp();
+    this->schedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer), 1);
 
 }
 
@@ -114,6 +117,9 @@ void GameLayer::createTimer() {
 
 void GameLayer::prepareNextQuestion() {
     resetAnswerBlock();
+    m_questionString.clear();
+    m_answerString.clear();
+    m_answerState = NO_RESULT;
     
     QuestionBlock* curQuestion = m_questionsNew.at(m_curQuestion);
     
@@ -126,52 +132,56 @@ void GameLayer::prepareNextQuestion() {
             std::string cToS(1, letter);
             letterLabel->setString(cToS);
             m_questionString = m_questionString + cToS;
-            letterLabel->setTag(i);
         }
     }
+}
+void GameLayer::checkAnswerAndAnimate(){
+    
+    if (m_answerString.size() == getGameWordSize()) {
+        bool isCorrect = checkAnswer();
+        if (isCorrect){
+            m_answerState = CORRECT_ANSWER;
+            correctAnswerAnimation();
+        }else{
+            m_answerState = WRONG_ANSWER;
+            wrongAnswerAnimation();
+        }
+        pauseOnAnimation(1);
+    }
+}
+
+bool GameLayer::checkAnswer() {
+    
+    bool isAnswerCorrect = false;
+    
+    QuestionBlock* currQuestionStruct = m_questionsNew.at(m_curQuestion);
+    std::string rightAnswer = currQuestionStruct->m_answer.at(0); //TODO::checking one answer only for now
+    if (m_answerString.compare(rightAnswer) == 0) {
+        CCLOG("correct answer");
+        isAnswerCorrect = true;
+    }else {
+        CCLOG("wrong answer");
+        isAnswerCorrect = false;
+    }
+    return isAnswerCorrect;
 }
 
 void GameLayer::answerAlphabetCallback(Ref* pSender) {
     
-    CCLOG("inside answer alphabet callback");
-    MenuItemSprite* answerMenu = (MenuItemSprite*)pSender;
-    Sprite* answerSprite = (Sprite*)answerMenu->getChildByTag(TAG_SPRITE_BG);
-    Label* alphaLabel = (Label*)answerSprite->getChildByTag(TAG_ALPHABET);
-    std::string ansLetter = alphaLabel->getString();
-    
-    QuestionBlock* curQuestion = m_questionsNew.at(m_curQuestion);
-    for (int i=0; i < curQuestion->m_question.size(); i++){
-        char letter = curQuestion->m_question.at(i)->m_alphabet;
-        std::string cToS(1, letter);
-        if (cToS == ansLetter){
-            bool isSelected = curQuestion->m_question.at(i)->m_isSelected;
-            if (isSelected) {
-                removeLetterFromAnswer(letter);
-                curQuestion->m_question.at(i)->m_isSelected = false;
-                updateAnswerBlock(m_answerString);
-            }
-        }
-    }
-}
-
-void GameLayer::questionAlphabetCallback(Ref* pSender) {
-
-    CCLOG("Inside question alphabet callback");
-    MenuItemSprite* questionMenu = (MenuItemSprite*)pSender;
-    int tag = questionMenu->getTag();
-    if (!m_questionString.empty()){
-        char selectedChar = m_questionString[tag];
+    if (!m_isPause){
+        CCLOG("inside answer alphabet callback");
+        MenuItemSprite* answerMenu = (MenuItemSprite*)pSender;
+        Sprite* answerSprite = (Sprite*)answerMenu->getChildByTag(TAG_SPRITE_BG);
+        Label* alphaLabel = (Label*)answerSprite->getChildByTag(TAG_ALPHABET);
+        std::string ansLetter = alphaLabel->getString();
+        
         QuestionBlock* curQuestion = m_questionsNew.at(m_curQuestion);
         for (int i=0; i < curQuestion->m_question.size(); i++){
             char letter = curQuestion->m_question.at(i)->m_alphabet;
-            if (letter == selectedChar){
-                std::string cToS(1, letter);
+            std::string cToS(1, letter);
+            if (cToS == ansLetter){
                 bool isSelected = curQuestion->m_question.at(i)->m_isSelected;
-                if (!isSelected) {
-                    m_answerString = m_answerString + cToS;
-                    updateAnswerBlock(m_answerString);
-                    curQuestion->m_question.at(i)->m_isSelected = true;
-                }else{
+                if (isSelected) {
                     removeLetterFromAnswer(letter);
                     curQuestion->m_question.at(i)->m_isSelected = false;
                     updateAnswerBlock(m_answerString);
@@ -179,6 +189,49 @@ void GameLayer::questionAlphabetCallback(Ref* pSender) {
             }
         }
     }
+}
+
+void GameLayer::questionAlphabetCallback(Ref* pSender) {
+
+    if (!m_isPause){
+        CCLOG("Inside question alphabet callback");
+        MenuItemSprite* questionMenu = (MenuItemSprite*)pSender;
+        int tag = questionMenu->getTag();
+        if (!m_questionString.empty()){
+            char selectedChar = m_questionString[tag];
+            QuestionBlock* curQuestion = m_questionsNew.at(m_curQuestion);
+            for (int i=0; i < curQuestion->m_question.size(); i++){
+                char letter = curQuestion->m_question.at(i)->m_alphabet;
+                if (letter == selectedChar){
+                    std::string cToS(1, letter);
+                    bool isSelected = curQuestion->m_question.at(i)->m_isSelected;
+                    if (!isSelected) {
+                        m_answerString = m_answerString + cToS;
+                        updateAnswerBlock(m_answerString);
+                        curQuestion->m_question.at(i)->m_isSelected = true;
+                    }else{
+                        removeLetterFromAnswer(letter);
+                        curQuestion->m_question.at(i)->m_isSelected = false;
+                        updateAnswerBlock(m_answerString);
+                    }
+                }
+            }
+        }
+        checkAnswerAndAnimate();
+    }
+}
+
+void GameLayer::pauseOnAnimation(float dt) {
+    m_isPause = true;
+    m_pauseTime = dt;
+}
+
+int GameLayer::getGameWordSize() {
+    return m_wordSize;
+}
+
+void GameLayer::setGameWordSize(int size) {
+    m_wordSize = size;
 }
 
 void GameLayer::removeLetterFromAnswer(char letter) {
@@ -191,7 +244,6 @@ void GameLayer::removeLetterFromAnswer(char letter) {
             break;
         }
     }
-
 }
 
 void GameLayer::updateAnswerBlock(std::string ansStr) {
@@ -212,25 +264,15 @@ void GameLayer::updateAnswerBlock(std::string ansStr) {
         }
     }
 }
+void GameLayer::resetSelectedQuestionAlphabet() {
 
-bool GameLayer::checkAnswer() {
-   
-    bool isAnswerCorrect = false;
-    
-    WordStruct* currQuestionStruct = m_questions.at(m_curQuestion);
-    std::string rightAnswer = currQuestionStruct->m_answer;
-    if (m_answerString.compare(rightAnswer) == 0) {
-        CCLOG("correct answer");
-        isAnswerCorrect = true;
-    }else {
-        CCLOG("wrong answer");
-        isAnswerCorrect = false;
+    QuestionBlock* curQuestion = m_questionsNew.at(m_curQuestion);
+    for (int i=0; i < curQuestion->m_question.size(); i++){
+        curQuestion->m_question.at(i)->m_isSelected = false;
     }
-    return isAnswerCorrect;
 }
 
 void GameLayer::resetAnswerBlock() {
-//    m_answerString.clear();
     for (int i=0; i < m_answerSpriteVector.size(); i++) {
         Sprite* letterSprite = m_answerSpriteVector.at(i);
         Label* letterLabel = (Label*)letterSprite->getChildByTag(TAG_ALPHABET);
@@ -244,9 +286,7 @@ void GameLayer::resetAnswerBlock() {
 void GameLayer::handleGameOver() {
     CCLOG("inside game over");
     this->unschedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer));
-    
     showPopUp("Your Game is Over, \n wanna try again ?");
-
 }
 
 void GameLayer::createPopUp(){
@@ -287,25 +327,21 @@ void GameLayer::okButtonCallback(Ref* pSender){
 }
 
 void GameLayer::showPopUp(std::string message) {
-    
     m_messageLabel->setString(message);
     m_popupBg->setVisible(true);
-    
 }
 
 void GameLayer::updateOnCorrectAnswer() {
     
     m_timerCount = MAX_TIMER_COUNT;
     m_curQuestion++;
-    if (m_curQuestion > m_questions.size() - 1){
+    if (m_curQuestion > m_questionsNew.size() - 1){
         handleGameOver();
     }else{
         prepareNextQuestion();
         this->schedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer), 1);
     }
-    
     m_timerLabel->setString(std::to_string(m_timerCount));
-
 }
 
 void GameLayer::correctAnswerAnimation() {
@@ -317,7 +353,6 @@ void GameLayer::correctAnswerAnimation() {
             letterLabel->setColor(Color3B::GREEN);
         }
     }
-
 }
 
 void GameLayer::wrongAnswerAnimation() {
@@ -329,38 +364,41 @@ void GameLayer::wrongAnswerAnimation() {
             letterLabel->setColor(Color3B::RED);
         }
     }
+}
 
+void GameLayer::proceedGameAccordingToGameState() {
+
+    if (m_answerState == NO_RESULT) {
+        
+    }else if (m_answerState == CORRECT_ANSWER) {
+        updateOnCorrectAnswer();
+        m_answerState = NO_RESULT;
+    }else if (m_answerState == WRONG_ANSWER) {
+        resetAnswerBlock();
+        m_answerString.clear();
+        resetSelectedQuestionAlphabet();
+        m_answerState = NO_RESULT;
+    }
 }
 
 void GameLayer::reduceTimer(float dt) {
-
-    if (m_answerString.size() == 4){
-        bool isAnsCorrect = checkAnswer();
-        if (isAnsCorrect){
-            
-            this->unschedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer));
-            correctAnswerAnimation();
-            m_timerLabel->setString("");
-            CallFunc* callback = CallFunc::create([=] {
-                updateOnCorrectAnswer();
-            });
-            this->runAction(Sequence::create(DelayTime::create(1),callback,NULL));
-            
-        }else{
-            
-            wrongAnswerAnimation();
-            resetAnswerBlock();
-            m_timerCount--;
-            
-        }
-    }else {
+    
+    if (!m_isPause){
         if (m_timerCount == 0){
             handleGameOver();
         }else{
             m_timerCount--;
+            proceedGameAccordingToGameState();
+        }
+        m_timerLabel->setString(std::to_string(m_timerCount));
+    }else{
+        if (m_pauseTime != 0){
+            m_pauseTime--;
+        }else{
+            m_isPause = false;
+            m_pauseTime = 1;
         }
     }
-    m_timerLabel->setString(std::to_string(m_timerCount));
 }
 
 

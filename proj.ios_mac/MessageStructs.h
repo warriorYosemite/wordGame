@@ -16,6 +16,12 @@ struct AlphabetDetail {
     }
 };
 
+enum ResultState {
+    NO_RESULT = 0,
+    CORRECT_ANSWER,
+    WRONG_ANSWER
+};
+
 struct QuestionBlock {
     
     std::vector<AlphabetDetail* > m_question;
