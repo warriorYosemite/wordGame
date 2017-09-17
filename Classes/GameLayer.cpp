@@ -11,7 +11,8 @@
 
 USING_NS_CC;
 
-#define MAX_TIMER_COUNT                         10
+#define MAX_TIMER_COUNT                         15
+#define TIME_DELTA                              6
 
 Scene* GameLayer::createScene()
 {
@@ -59,6 +60,7 @@ void GameLayer::onEnter()
     m_questionString = "";
     m_popupBg = nullptr;
     
+    fillSpriteNameVector();
     fillQuestionsVector();
     
     createBackground();
@@ -91,7 +93,8 @@ void GameLayer::updateQuestionBlocks(WordStruct* wordStruct) {
 void GameLayer::createAlphabetsBlocks(){
     
     for (int i=0; i < MAX_ALPHABET_COUNT; i++){
-        Sprite* alphabetBg = Sprite::create("blackbg.png");
+        std::string spriteName = m_spriteName.at(i);
+        Sprite* alphabetBg = Sprite::create(spriteName);
         alphabetBg->setTag(TAG_SPRITE_BG);
         MenuItemSprite* alphabetE = MenuItemSprite::create(alphabetBg, alphabetBg, CC_CALLBACK_1(GameLayer::questionAlphabetCallback, this));
         alphabetE->setPosition(getPositionAccordingToIndex(i));
@@ -100,18 +103,25 @@ void GameLayer::createAlphabetsBlocks(){
         menu->setPosition(Vec2(0,0));
         this->addChild(menu);
         
-        Label* alphabetLabel = Label::createWithTTF("", FONT_HEADLINE, 50);
-        alphabetLabel->setPosition(Vec2(alphabetBg->getContentSize().width * 0.5, alphabetBg->getContentSize().height * 0.5));
+        Label* alphabetLabel = Label::createWithTTF("", FONT_HEADLINE, 70);
+        alphabetLabel->setPosition(Vec2(alphabetBg->getContentSize().width * 0.5, alphabetBg->getContentSize().height * 0.6));
+        alphabetLabel->setColor(Color3B::BLACK);
+        alphabetLabel->setOpacity(180);
         alphabetLabel->setTag(TAG_ALPHABET);
         alphabetBg->addChild(alphabetLabel);
         m_questionSpriteVector.push_back(alphabetBg);
     }
 }
 
+void GameLayer::updateTimeOnCorrectAnswer() {
+    int timeDelta = TIME_DELTA;
+    m_timerCount = m_timerCount + timeDelta;
+}
+
 void GameLayer::createTimer() {
     m_timerLabel = Label::createWithTTF(std::to_string(m_timerCount),FONT_HEADLINE,75);
     m_timerLabel->setPosition(Vec2(m_visibleSize.width * 0.5, m_visibleSize.height * 0.6));
-    m_timerLabel->setColor(Color3B::BLACK);
+    m_timerLabel->setColor(Color3B::WHITE);
     this->addChild(m_timerLabel);
 }
 
@@ -333,7 +343,7 @@ void GameLayer::showPopUp(std::string message) {
 
 void GameLayer::updateOnCorrectAnswer() {
     
-    m_timerCount = MAX_TIMER_COUNT;
+    updateTimeOnCorrectAnswer();
     m_curQuestion++;
     if (m_curQuestion > m_questionsNew.size() - 1){
         handleGameOver();
@@ -408,7 +418,9 @@ void GameLayer::createAnswerBlocks() {
     float yPos = m_visibleSize.height * 0.75;
     
     for (int i=0; i < MAX_ALPHABET_COUNT; i++){
-        Sprite* alphabetBg = Sprite::create("blackbg.png");
+        Sprite* alphabetBg = Sprite::create("ingame_emptybox.png");
+        std::string spriteName = m_spriteName.at(i);
+        Sprite* colouredBg = Sprite::create(spriteName);
         alphabetBg->setTag(TAG_SPRITE_BG);
         MenuItemSprite* alphabetE = MenuItemSprite::create(alphabetBg, alphabetBg, CC_CALLBACK_1(GameLayer::answerAlphabetCallback, this));
         alphabetE->setPosition(Vec2(xPos +  (i * alphabetBg->getContentSize().width * 1.25) , yPos));
@@ -429,21 +441,21 @@ Vec2 GameLayer::getPositionAccordingToIndex(int index) {
     float xPos;
     float yPos;
     float basePosX = m_visibleSize.width * 0.5;
-    float basePosY = m_visibleSize.height * 0.4;
+    float basePosY = m_visibleSize.height * 0.3;
     
     Sprite* alphabetBg = Sprite::create("blackbg.png");
     float width = alphabetBg->getContentSize().width;
     
     if (index % 2 == 0) {
-        xPos = basePosX - width * 0.6;
+        xPos = basePosX - width * 0.7;
     }else{
-        xPos = basePosX + width * 0.6;
+        xPos = basePosX + width * 0.7;
     }
     
     if (index < 2) {
-        yPos = basePosY + width * 0.6;
+        yPos = basePosY + width * 0.7;
     }else{
-        yPos = basePosY - width * 0.6;
+        yPos = basePosY - width * 0.7;
     }
     
     return Vec2(xPos, yPos);
@@ -451,9 +463,22 @@ Vec2 GameLayer::getPositionAccordingToIndex(int index) {
 
 void GameLayer::createBackground() {
 
-    m_background = LayerColor::create(Color4B(255,165,0,255), m_visibleSize.width, m_visibleSize.height);
-    m_background->setPosition(Vec2(0,0));
+    m_background = Sprite::create("ingame_bg.jpg");
+    m_background->setPosition(Vec2(m_visibleSize.width * 0.5, m_visibleSize.height * 0.5));
+    
+    float scaleFactorW = m_visibleSize.width / m_background->getContentSize().width;
+    float scaleFactorH = m_visibleSize.height/ m_background->getContentSize().height;
+    
+    m_background->setScale(scaleFactorW, scaleFactorH);
     this->addChild(m_background);
+}
+
+void GameLayer::fillSpriteNameVector() {
+
+    m_spriteName.push_back("mainscreen_blue.png");
+    m_spriteName.push_back("mainscreen_cyan.png");
+    m_spriteName.push_back("mainscreen_green.png");
+    m_spriteName.push_back("mainscreen_orange.png");
 }
 
 void GameLayer::fillQuestionsVector() {

@@ -30,12 +30,16 @@ public:
     Sprite* backGround2;
     InfiniteParallaxNode *parallaxNode;
     Label* highScoreStr;
-    
+    std::vector<std::string> m_spriteName;
+    Sprite* m_playerProfile;
     
     void createBackgroundWithAnimation();
     void createTextItems();
     void createPlayButton();
     void updateHighScoreAfterGame();
+    void createPlayerProfileItem();
+    void createGridElements();
+    void fillSpriteNameVector();
     
     void updateBgPosition(float dt);
     

@@ -39,23 +39,17 @@ bool AppDelegate::applicationDidFinishLaunching() {
         director->setOpenGLView(glview);
     }
     
-    
     Size frameSize = glview->getFrameSize();
-    
-    
     if(frameSize.height/frameSize.width > 1.5) {
         glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_WIDTH);
-        
     } else {
         glview->setDesignResolutionSize(designResolutionSize.width, designResolutionSize.height, ResolutionPolicy::FIXED_HEIGHT);
     }
     
     // turn on display FPS
     director->setDisplayStats(false);
-    
     // set FPS. the default value is 1.0/60 if you don't call this
     director->setAnimationInterval(1.0 / 60);
-    
     register_all_packages();
     
     auto scene = SplashScene::createScene();

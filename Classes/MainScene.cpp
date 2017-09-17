@@ -50,36 +50,56 @@ void MainScene::onEnter()
     
     CCLOG("In on enter main Scene");
     createBackgroundWithAnimation();
+    fillSpriteNameVector();
+    
+    createGridElements();
     
     createTextItems();
     createPlayButton();
+    
+    createPlayerProfileItem();
+    
     Node::onEnter();
-    this->schedule(CC_SCHEDULE_SELECTOR(MainScene::updateBgPosition), 0.1);
 }
 
 
 void MainScene::createTextItems(){
     
-    Label* gameName = Label::createWithTTF("WORD SEARCH", FONT_HEADLINE, 60);
+    Label* gameName = Label::createWithTTF("WORD BOUNCE", FONT_HEADLINE, 60);
     gameName->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height - gameName->getContentSize().height * 0.85));
-    gameName->setColor(Color3B::BLACK);
+    gameName->setColor(Color3B::WHITE);
     this->addChild(gameName);
+}
+
+void MainScene::fillSpriteNameVector() {
     
-    UserDefault* userDef =  UserDefault::getInstance();
-    int value = userDef->getIntegerForKey(GAME_HIGH_SCORE_KEY, 0);
+    m_spriteName.push_back("mainscreen_blue.png");
+    m_spriteName.push_back("mainscreen_cyan.png");
+    m_spriteName.push_back("mainscreen_green.png");
+    m_spriteName.push_back("mainscreen_orange.png");
+}
+
+void MainScene::createGridElements() {
     
-    std::string highScore = "HIGH SCORE " + std::to_string(value);
-    highScoreStr = Label::createWithTTF(highScore, FONT_HEADLINE, 50);
-    highScoreStr->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.25));
-    highScoreStr->setColor(Color3B::BLACK);
-    this->addChild(highScoreStr);
+    Scale9Sprite* gridBg = Scale9Sprite::create("mainscreen_gridbg.png");
+    gridBg->setContentSize(Size(visibleSize.width * 0.8, visibleSize.height * 0.1));
+    gridBg->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.7));
+    this->addChild(gridBg);
+
     
-    std::string textStr = "Guess the 4 letter word before timer expires";
-    Label* ruleStr = Label::createWithTTF(textStr, FONT_HEADLINE, 22);
-    ruleStr->setAlignment(TextHAlignment::CENTER);
-    ruleStr->setColor(Color3B::BLACK);
-    ruleStr->setPosition(Vec2(visibleSize.width * 0.5, 50));
-    this->addChild(ruleStr);
+    
+}
+
+void MainScene::createPlayerProfileItem() {
+    
+    Sprite* playerProfileBg = Sprite::create("mainscreen_playerbg.png");
+    playerProfileBg->setAnchorPoint(Vec2(0.5, 0));
+    playerProfileBg->setPosition(Vec2(visibleSize.width * 0.5, 0));
+    this->addChild(playerProfileBg);
+    
+    m_playerProfile = Sprite::create("mainscreen_playe_mask.png");
+    m_playerProfile->setPosition(Vec2(m_playerProfile->getContentSize().width * 0.65, m_playerProfile->getContentSize().height * 0.65));
+    playerProfileBg->addChild(m_playerProfile);
     
 }
 
@@ -93,13 +113,20 @@ void MainScene::updateHighScoreAfterGame(){
 
 void MainScene::createPlayButton(){
     
-    Label* playLabel = Label::createWithTTF("PLAY", FONT_HEADLINE, 60);
-    MenuItemLabel* playButton = MenuItemLabel::create(playLabel, CC_CALLBACK_1(MainScene::playButtonCallback, this));
+    Scale9Sprite* playBg = Scale9Sprite::create("mainscreen_playbtn.png");
+    playBg->setContentSize(Size(visibleSize.width * 0.75, visibleSize.height * 0.15));
+    playBg->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.4));
+    this->addChild(playBg);
+    
+    Label* playLabel = Label::createWithTTF("PLAY NOW", FONT_HEADLINE, 60);
     playLabel->setColor(Color3B::BLACK);
+    playLabel->setOpacity(180);
+    MenuItemLabel* playButton = MenuItemLabel::create(playLabel, CC_CALLBACK_1(MainScene::playButtonCallback, this));
     playButton->setAnchorPoint(Vec2(0.5,0.5));
+    playButton->setPosition(Vec2(playBg->getContentSize().width* 0.5, playBg->getContentSize().height * 0.55));
     auto playMenu = Menu::create(playButton, NULL);
-    playMenu->setPosition(Vec2(visibleSize.width* 0.5, visibleSize.height * 0.55));
-    this->addChild(playMenu);
+    playMenu->setPosition(Vec2(0,0));
+    playBg->addChild(playMenu);
     
 }
 
@@ -113,26 +140,12 @@ void MainScene::playButtonCallback(Ref* pSender){
 
 void MainScene::createBackgroundWithAnimation(){
     
-    backGround = Sprite::create("background.jpg");
-    backGround2 = Sprite::create("background.jpg");
-    
-    parallaxNode = InfiniteParallaxNode::create();
-    backGround->setAnchorPoint(Point::ZERO);
-    backGround2->setAnchorPoint(Point::ZERO);
-    
-    parallaxNode->addChild(backGround, 1, Vec2(1.0f, 0.0f),
-                           Vec2(0.0f, visibleSize.height - backGround->getContentSize().height));
-    parallaxNode->addChild(backGround2, 1, Vec2(1.0f, 0.0f),
-                           Vec2(backGround->getContentSize().width,
-                                visibleSize.height - backGround->getContentSize().height));
-    
-    addChild(parallaxNode);
-}
-
-void MainScene::updateBgPosition(float dt){
-    
-    parallaxNode->setPosition(parallaxNode->getPosition() + infiniteMoveBy);
-    parallaxNode->updatePosition(infiniteMoveBy);
+    backGround = Sprite::create("ingame_bg.jpg");
+    backGround->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.5));
+    float scaleFactorW = visibleSize.width / backGround->getContentSize().width;
+    float scaleFactorH = visibleSize.height/ backGround->getContentSize().height;
+    backGround->setScale(scaleFactorW, scaleFactorH);
+    this->addChild(backGround);
 }
 
 void MainScene::menuCloseCallback(Ref* pSender)

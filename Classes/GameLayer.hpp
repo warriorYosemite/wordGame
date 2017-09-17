@@ -33,7 +33,7 @@ public:
     
     Size m_visibleSize;
     Label* m_scoreStr;
-    LayerColor* m_background;
+    Sprite* m_background;
     Label* m_timerLabel;
     int m_timerCount;
     int m_curQuestion;
@@ -45,6 +45,7 @@ public:
     std::vector<Sprite*> m_answerSpriteVector;
     std::vector<WordStruct *> m_questions;
     std::vector<QuestionBlock* > m_questionsNew;
+    std::vector<std::string> m_spriteName;
     std::string m_answerString;
     
     
@@ -58,7 +59,9 @@ public:
     void resetAnswerBlock();
     void resetSelectedQuestionAlphabet();
     void fillQuestionsVector();
+    void fillSpriteNameVector();
     void createTimer();
+    void updateTimeOnCorrectAnswer();
     void prepareNextQuestion();
     void handleGameOver();
     bool checkAnswer();
