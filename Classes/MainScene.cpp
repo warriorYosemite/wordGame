@@ -77,16 +77,81 @@ void MainScene::fillSpriteNameVector() {
     m_spriteName.push_back("mainscreen_cyan.png");
     m_spriteName.push_back("mainscreen_green.png");
     m_spriteName.push_back("mainscreen_orange.png");
+    
+    m_gridCount.push_back("4");
+    m_gridCount.push_back("5");
+    m_gridCount.push_back("6");
+    m_gridCount.push_back("7");
 }
 
 void MainScene::createGridElements() {
     
+    Sprite* temp = Sprite::create("mainscreen_green.png");
+    
     Scale9Sprite* gridBg = Scale9Sprite::create("mainscreen_gridbg.png");
-    gridBg->setContentSize(Size(visibleSize.width * 0.8, visibleSize.height * 0.1));
+    gridBg->setContentSize(Size(temp->getContentSize().width * 5, temp->getContentSize().height * 1.05));
     gridBg->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.7));
     this->addChild(gridBg);
 
+    Label* gridText = Label::createWithTTF("SELECT GRID", FONT_HEADLINE, 30);
+    gridText->setPosition(Vec2(gridBg->getContentSize().width * 0.5, gridBg->getContentSize().height * 1.5));
+    gridBg->addChild(gridText);
     
+    for (int i=0; i < MAX_ALPHABET_COUNT; i++){
+        std::string spriteName = m_spriteName.at(i);
+        Sprite* alphabetBg = Sprite::create(spriteName);
+        alphabetBg->setTag(TAG_SPRITE_BG);
+        MenuItemSprite* alphabetE = MenuItemSprite::create(alphabetBg, alphabetBg, CC_CALLBACK_1(MainScene::selectGridCallback, this));
+        alphabetE->setPosition(getXPositionAccordingToIndex(i), gridBg->getContentSize().height * 0.4);
+        alphabetE->setTag(i);
+        Menu* menu = Menu::create(alphabetE, NULL);
+        menu->setPosition(Vec2(0,0));
+        gridBg->addChild(menu);
+        
+        Label* alphabetLabel = Label::createWithTTF(m_gridCount.at(i), FONT_HEADLINE, 70);
+        alphabetLabel->setPosition(Vec2(alphabetBg->getContentSize().width * 0.5, alphabetBg->getContentSize().height * 0.6));
+        alphabetLabel->setColor(Color3B::BLACK);
+        alphabetLabel->setOpacity(180);
+        alphabetLabel->setTag(TAG_ALPHABET);
+        alphabetBg->addChild(alphabetLabel);
+        
+        Sprite* checkIcon = Sprite::create("mainscreen_check.png");
+        checkIcon->setPosition(Vec2(alphabetBg->getContentSize().width - checkIcon->getContentSize().width * 0.15, alphabetBg->getContentSize().height - checkIcon->getContentSize().height * 0.25));
+        checkIcon->setTag(CHECK_ICON_TAG);
+        checkIcon->setVisible(false);
+        alphabetBg->addChild(checkIcon);
+        
+        if (i == 0) {
+            checkIcon->setVisible(true);
+        }
+        
+        m_gridElemVector.push_back(alphabetBg);
+    }
+}
+
+float MainScene::getXPositionAccordingToIndex(int index) {
+    Sprite* temp = Sprite::create("mainscreen_green.png");
+    float baseX = temp->getContentSize().width * 0.765;
+    float xPos = baseX + ((temp->getContentSize().width * 1.2) * index);
+    return xPos;
+}
+
+void MainScene::resetCheckOnGrid() {
+
+    for (int i=0; i < m_gridElemVector.size(); i++) {
+        Sprite* image = m_gridElemVector.at(i);
+        image->getChildByTag(CHECK_ICON_TAG)->setVisible(false);
+    }
+}
+
+void MainScene::selectGridCallback(cocos2d::Ref* pSender) {
+
+    CCLOG("inside select grid callback");
+    resetCheckOnGrid();
+    
+    MenuItemSprite* gridElem = (MenuItemSprite*)pSender;
+    Sprite* gridSprite = (Sprite*)gridElem->getChildByTag(TAG_SPRITE_BG);
+    gridSprite->getChildByTag(CHECK_ICON_TAG)->setVisible(true);
     
 }
 

@@ -48,8 +48,14 @@ public:
     std::vector<std::string> m_spriteName;
     std::string m_answerString;
     
+    int m_bestScore;
+    int m_currentScore;
+    Label* m_currentScoreLabel;
+    Label* m_bestScoreLabel;
+    
     
     void createBackground();
+    void createScoreLabel();
     void createAlphabetsBlocks();
     Vec2 getPositionAccordingToIndex(int index);
     void createAnswerBlocks();

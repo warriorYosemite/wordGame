@@ -31,6 +31,8 @@ public:
     InfiniteParallaxNode *parallaxNode;
     Label* highScoreStr;
     std::vector<std::string> m_spriteName;
+    std::vector<Sprite* > m_gridElemVector;
+    std::vector<std::string> m_gridCount;
     Sprite* m_playerProfile;
     
     void createBackgroundWithAnimation();
@@ -40,12 +42,15 @@ public:
     void createPlayerProfileItem();
     void createGridElements();
     void fillSpriteNameVector();
+    float getXPositionAccordingToIndex(int index);
     
     void updateBgPosition(float dt);
+    void resetCheckOnGrid();
     
     void playButtonCallback(Ref* pSender);
     void playStageTwoCallback(Ref* pSender);
     void menuCloseCallback(cocos2d::Ref* pSender);
+    void selectGridCallback(cocos2d::Ref* pSender);
     
     // implement the "static create()" method manually
     CREATE_FUNC(MainScene);

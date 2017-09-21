@@ -59,11 +59,16 @@ void GameLayer::onEnter()
     m_answerString = "";
     m_questionString = "";
     m_popupBg = nullptr;
+    m_currentScore = 10;
+    m_bestScore = 20;
+    
     
     fillSpriteNameVector();
     fillQuestionsVector();
     
     createBackground();
+    
+    createScoreLabel();
     createAlphabetsBlocks();
     createAnswerBlocks();
     createTimer();
@@ -459,6 +464,29 @@ Vec2 GameLayer::getPositionAccordingToIndex(int index) {
     }
     
     return Vec2(xPos, yPos);
+}
+
+void GameLayer::createScoreLabel() {
+    
+    Label* currentText = Label::createWithTTF("CURRENT SCORE", FONT_HEADLINE, 18);
+    currentText->setPosition(Vec2(m_visibleSize.width * 0.5, m_visibleSize.height * 0.975));
+    this->addChild(currentText);
+    
+    m_currentScoreLabel = Label::createWithTTF(std::to_string(m_currentScore), FONT_HEADLINE, 40);
+    m_currentScoreLabel->setPosition(Vec2(m_visibleSize.width * 0.5, m_visibleSize.height * 0.93));
+    this->addChild(m_currentScoreLabel);
+
+    
+    Label* bestScoreText = Label::createWithTTF("BEST SCORE", FONT_HEADLINE, 18);
+    bestScoreText->setAnchorPoint(Vec2(1,0.5));
+    bestScoreText->setPosition(Vec2(m_visibleSize.width * 0.975, m_visibleSize.height * 0.975));
+    this->addChild(bestScoreText);
+    
+    m_bestScoreLabel = Label::createWithTTF(std::to_string(m_bestScore), FONT_HEADLINE, 40);
+    m_bestScoreLabel->setAnchorPoint(Vec2(1,0.5));
+    m_bestScoreLabel->setPosition(Vec2(m_visibleSize.width * 0.975, m_visibleSize.height * 0.93));
+    this->addChild(m_bestScoreLabel);
+    
 }
 
 void GameLayer::createBackground() {

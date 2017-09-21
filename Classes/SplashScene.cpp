@@ -46,9 +46,12 @@ void SplashScene::onEnter()
 {
     Layer::onEnter();
     
-    LayerColor* layerBg = LayerColor::create(Color4B(255,165,0,255), visibleSize.width, visibleSize.height);
-    layerBg->setPosition(Vec2(0,0));
-    this->addChild(layerBg);
+    Sprite* backGround = Sprite::create("ingame_bg.jpg");
+    backGround->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.5));
+    float scaleFactorW = visibleSize.width / backGround->getContentSize().width;
+    float scaleFactorH = visibleSize.height/ backGround->getContentSize().height;
+    backGround->setScale(scaleFactorW, scaleFactorH);
+    this->addChild(backGround);
     
     m_logo = Sprite::create("logo.png");
     m_logo->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.6));
@@ -58,10 +61,10 @@ void SplashScene::onEnter()
     this->addChild(m_logo);
     
     
-    m_appName = Label::createWithTTF("WORD SEARCH", FONT_HEADLINE, 60);
+    m_appName = Label::createWithTTF("WORD BOUNCE", FONT_HEADLINE, 60);
     m_appName->setPosition(Vec2(visibleSize.width * 0.5, visibleSize.height * 0.3));
     m_appName->setOpacityModifyRGB(true);
-    m_appName->setColor(Color3B::BLACK);
+    m_appName->setColor(Color3B::WHITE);
     m_appName->setOpacity(0);
     this->addChild(m_appName);
     

@@ -19,6 +19,7 @@
 
 #define TAG_ALPHABET                                        200
 #define TAG_SPRITE_BG                                       201
+#define CHECK_ICON_TAG                                      202
 
 
 #endif /* constant_h */
