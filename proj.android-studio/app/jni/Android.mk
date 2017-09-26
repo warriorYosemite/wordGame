@@ -7,15 +7,27 @@ $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/external)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos)
 $(call import-add-path,$(LOCAL_PATH)/../../../cocos2d/cocos/audio/include)
 
-LOCAL_MODULE := MyGame_shared
+LOCAL_MODULE := cocos2dcpp_shared
 
-LOCAL_MODULE_FILENAME := libMyGame
+LOCAL_MODULE_FILENAME := libcocos2dcpp
 
-LOCAL_SRC_FILES := hellocpp/main.cpp \
-                   ../../../Classes/AppDelegate.cpp \
-                   ../../../Classes/HelloWorldScene.cpp
+HELLOCPP_FILES  := $(wildcard $(LOCAL_PATH)/hellocpp/*.cpp)
+HELLOCPP_FILES  := $(HELLOCPP_FILES:$(LOCAL_PATH)/%=%)
 
-LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes
+CLASSES_FILES   := $(wildcard $(LOCAL_PATH)/../../../Classes/*.cpp)
+CLASSES_FILES   += $(wildcard $(LOCAL_PATH)/../../../Classes/*.c)
+CLASSES_FILES   += $(wildcard $(LOCAL_PATH)/../../../Classes/**/*.cpp)
+CLASSES_FILES   := $(CLASSES_FILES:$(LOCAL_PATH)/%=%)
+
+
+LOCAL_SRC_FILES := $(HELLOCPP_FILES)
+LOCAL_SRC_FILES += $(CLASSES_FILES)
+
+
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/../../../Classes \
+                                        $(LOCAL_PATH)/../../../cocos2d/cocos/ui \
+
+
 
 # _COCOS_HEADER_ANDROID_BEGIN
 # _COCOS_HEADER_ANDROID_END

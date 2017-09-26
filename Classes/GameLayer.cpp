@@ -59,9 +59,9 @@ void GameLayer::onEnter()
     m_answerString = "";
     m_questionString = "";
     m_popupBg = nullptr;
-    m_currentScore = 10;
-    m_bestScore = 20;
+    m_currentScore = 0;
     
+    m_bestScore = UserDefault::getInstance()->getIntegerForKey(GAME_HIGH_SCORE_KEY, 0);
     
     fillSpriteNameVector();
     fillQuestionsVector();
@@ -150,12 +150,24 @@ void GameLayer::prepareNextQuestion() {
         }
     }
 }
+
+void GameLayer::updateScoreLabel() {
+    m_currentScoreLabel->setString(std::to_string(m_currentScore));
+    
+    if (m_currentScore > m_bestScore){
+        m_bestScore = m_currentScore;
+        m_bestScoreLabel->setString(std::to_string(m_bestScore));
+    }
+}
+
 void GameLayer::checkAnswerAndAnimate(){
     
     if (m_answerString.size() == getGameWordSize()) {
         bool isCorrect = checkAnswer();
         if (isCorrect){
             m_answerState = CORRECT_ANSWER;
+            m_currentScore++;
+            updateScoreLabel();
             correctAnswerAnimation();
         }else{
             m_answerState = WRONG_ANSWER;
@@ -301,6 +313,9 @@ void GameLayer::resetAnswerBlock() {
 void GameLayer::handleGameOver() {
     CCLOG("inside game over");
     this->unschedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer));
+    UserDefault::getInstance()->setIntegerForKey(GAME_HIGH_SCORE_KEY, m_currentScore);
+    UserDefault::getInstance()->flush();
+    
     showPopUp("Your Game is Over, \n wanna try again ?");
 }
 

@@ -82,6 +82,7 @@ public:
     void reduceTimer(float dt);
     void pauseOnAnimation(float dt);
     void proceedGameAccordingToGameState();
+    void updateScoreLabel();
     
     
     void questionAlphabetCallback(Ref* pSender);
