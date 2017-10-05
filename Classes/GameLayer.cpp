@@ -8,6 +8,7 @@
 #include "extensions/cocos-ext.h"
 #include "constant.h"
 #include "MainScene.hpp"
+#include "Database.hpp"
 
 USING_NS_CC;
 
@@ -65,6 +66,7 @@ void GameLayer::onEnter()
     
     fillSpriteNameVector();
     fillQuestionsVector();
+    initialiseDatabase();
     
     createBackground();
     
@@ -76,6 +78,15 @@ void GameLayer::onEnter()
     createPopUp();
     this->schedule(CC_SCHEDULE_SELECTOR(GameLayer::reduceTimer), 1);
 
+}
+
+
+void GameLayer::initialiseDatabase() {
+
+    Database* db;
+    db = new Database("wordbounce.sqlite");
+    
+    
 }
 
 void GameLayer::updateQuestionBlocks(WordStruct* wordStruct) {

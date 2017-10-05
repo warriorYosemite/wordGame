@@ -29,6 +29,9 @@
 		09636F0C1F2C9754008167C2 /* background.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09636F0B1F2C9754008167C2 /* background.jpg */; };
 		09636F0F1F2D1CC8008167C2 /* GameLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 09636F0D1F2D1CC8008167C2 /* GameLayer.cpp */; };
 		09636F111F30D06B008167C2 /* blackbg.png in Resources */ = {isa = PBXBuildFile; fileRef = 09636F101F30D06B008167C2 /* blackbg.png */; };
+		097406681F85409700999C44 /* wordbounce.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 097406671F85409700999C44 /* wordbounce.sqlite */; };
+		0974066C1F8543C600999C44 /* Database.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0974066A1F8543C600999C44 /* Database.cpp */; };
+		0974066E1F8548B500999C44 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 0974066D1F8548B500999C44 /* libsqlite3.tbd */; };
 		1AC6FB21180E996B004C840B /* libcocos2d Mac.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC6FAF9180E9839004C840B /* libcocos2d Mac.a */; };
 		1AC6FB30180E99EB004C840B /* libcocos2d iOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AC6FB07180E9839004C840B /* libcocos2d iOS.a */; };
 		1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D30AB110D05D00D00671497 /* Foundation.framework */; };
@@ -153,6 +156,10 @@
 		09636F0D1F2D1CC8008167C2 /* GameLayer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GameLayer.cpp; sourceTree = "<group>"; };
 		09636F0E1F2D1CC8008167C2 /* GameLayer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = GameLayer.hpp; sourceTree = "<group>"; };
 		09636F101F30D06B008167C2 /* blackbg.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blackbg.png; sourceTree = "<group>"; };
+		097406671F85409700999C44 /* wordbounce.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; path = wordbounce.sqlite; sourceTree = "<group>"; };
+		0974066A1F8543C600999C44 /* Database.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Database.cpp; sourceTree = "<group>"; };
+		0974066B1F8543C600999C44 /* Database.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Database.hpp; sourceTree = "<group>"; };
+		0974066D1F8548B500999C44 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/usr/lib/libsqlite3.tbd; sourceTree = DEVELOPER_DIR; };
 		0984A5AC1F3633B100FA76FF /* MessageStructs.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = MessageStructs.h; path = ../proj.ios_mac/MessageStructs.h; sourceTree = "<group>"; };
 		1AC6FAE5180E9839004C840B /* cocos2d_libs.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = cocos2d_libs.xcodeproj; path = ../cocos2d/build/cocos2d_libs.xcodeproj; sourceTree = "<group>"; };
 		1ACB3243164770DE00914215 /* libcurl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcurl.a; path = ../../cocos2dx/platform/third_party/ios/libraries/libcurl.a; sourceTree = "<group>"; };
@@ -217,6 +224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0974066E1F8548B500999C44 /* libsqlite3.tbd in Frameworks */,
 				294D0D641D0D56D500F7F5D4 /* CoreText.framework in Frameworks */,
 				ED545A7C1B68A1F400C3958E /* libiconv.dylib in Frameworks */,
 				52B47A471A53D09C004E4C60 /* Security.framework in Frameworks */,
@@ -307,6 +315,7 @@
 		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0974066D1F8548B500999C44 /* libsqlite3.tbd */,
 				294D0D631D0D56D500F7F5D4 /* CoreText.framework */,
 				ED545A7D1B68A1FA00C3958E /* libiconv.dylib */,
 				ED545A7B1B68A1F400C3958E /* libiconv.dylib */,
@@ -334,6 +343,7 @@
 		46880B7519C43A67006E1F66 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				097406671F85409700999C44 /* wordbounce.sqlite */,
 				0939472B1F6ECC06006B606E /* mainscreen_check.png */,
 				0939472C1F6ECC06006B606E /* mainscreen_gridbg.png */,
 				0939472D1F6ECC06006B606E /* mainscreen_playbtn.png */,
@@ -364,6 +374,8 @@
 			children = (
 				0984A5AC1F3633B100FA76FF /* MessageStructs.h */,
 				09636F021F2C8BE3008167C2 /* constant.h */,
+				0974066A1F8543C600999C44 /* Database.cpp */,
+				0974066B1F8543C600999C44 /* Database.hpp */,
 				09636F0D1F2D1CC8008167C2 /* GameLayer.cpp */,
 				09636F0E1F2D1CC8008167C2 /* GameLayer.hpp */,
 				09636F081F2C9322008167C2 /* MainScene.cpp */,
@@ -538,6 +550,7 @@
 				5087E78317EB970100C73F5D /* Icon-152.png in Resources */,
 				093947331F6ECC06006B606E /* mainscreen_playbtn.png in Resources */,
 				5087E77D17EB970100C73F5D /* Default-568h@2x.png in Resources */,
+				097406681F85409700999C44 /* wordbounce.sqlite in Resources */,
 				0939472A1F6EAFF6006B606E /* mainscreen_orange.png in Resources */,
 				093947341F6ECC06006B606E /* mainscreen_playe_mask.png in Resources */,
 				5087E78517EB970100C73F5D /* Icon-72.png in Resources */,
@@ -591,6 +604,7 @@
 				09636F011F2C8B32008167C2 /* SplashScene.cpp in Sources */,
 				503AE10017EB989F00D1A890 /* AppController.mm in Sources */,
 				503AE10217EB989F00D1A890 /* RootViewController.mm in Sources */,
+				0974066C1F8543C600999C44 /* Database.cpp in Sources */,
 				09636F0A1F2C9322008167C2 /* MainScene.cpp in Sources */,
 				09636F0F1F2D1CC8008167C2 /* GameLayer.cpp in Sources */,
 				09636F071F2C926E008167C2 /* InfiniteParallaxNode.cpp in Sources */,

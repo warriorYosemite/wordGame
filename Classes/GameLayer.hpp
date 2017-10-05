@@ -54,6 +54,7 @@ public:
     Label* m_bestScoreLabel;
     
     
+    void initialiseDatabase();
     void createBackground();
     void createScoreLabel();
     void createAlphabetsBlocks();
