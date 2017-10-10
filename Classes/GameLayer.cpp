@@ -83,9 +83,30 @@ void GameLayer::onEnter()
 
 void GameLayer::initialiseDatabase() {
 
-    Database* db;
-    db = new Database("wordbounce.sqlite");
+    bool isSuccess = Database::open();
+    if (isSuccess) {
+        
+        sqlite3 *db = Database::getDatabase();
+        if (db != nullptr){
+        
+        }
+    }
     
+//    sqlite3 *pDB = NULL;
+//    char* errMsg = NULL;
+//    std::string sqlstr;
+//    int result;
+//    
+//    std::string dbPath = CCFileUtils::sharedFileUtils()->getWritablePath();
+//    dbPath.append("wordbounce.sqlite");
+//    
+//    result = sqlite3_open(dbPath.c_str(), &pDB);
+//    if (result != SQLITE_OK) {
+//        CCLOG("OPENING WRONG, %d, MSG:%s",result,errMsg);
+//    }else {
+//    
+//        CCLOG("result %d",result);
+//    }
     
 }
 

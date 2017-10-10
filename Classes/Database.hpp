@@ -18,15 +18,20 @@ using namespace std;
 class Database {
 public:
     
-    Database(char* filename);
     ~Database();
-    
-    bool open(char* filename);
     vector<vector<string> > query(char* query);
-    void close();
+    static void close();
+    static sqlite3* getDatabase();
+    
+    static bool open();
+    static bool create(std::string aTableName);
+    static bool execute(cocos2d::CCString *aSql);
     
 private:
+    Database();
+    static Database *m_instance;
     sqlite3 *database;
+    static Database* getInstance();
 };
 
 #endif /* Database_hpp */

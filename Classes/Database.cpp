@@ -8,22 +8,60 @@
 
 #include "Database.hpp"
 #include <iostream>
+USING_NS_CC;
 
-Database::Database(char* filename) {
+Database* Database::m_instance = NULL;
+
+Database::Database() {
     database = NULL;
-    open(filename);
 }
 
 Database::~Database(){
     
 }
 
-bool Database::open(char* filename) {
-    int result = sqlite3_open(filename, &database);
-    if (result != SQLITE_OK){
-        CCLOG("open database failed,  number%d",result);
+Database* Database::getInstance()
+{
+    if (m_instance == NULL)
+        m_instance = new Database();
+    return m_instance;
+}
+
+sqlite3* Database::getDatabase()
+{
+    return Database::getInstance()->database;
+}
+
+bool Database::open() {
+    char* errMsg = NULL;
+    std::string sqlstr;
+    int result;
+    
+    std::string dbPath = CCFileUtils::sharedFileUtils()->getWritablePath();
+    dbPath.append("wordbounce.sqlite");
+    
+    result = sqlite3_open(dbPath.c_str(), &Database::getInstance()->database);
+    if (result != SQLITE_OK) {
+        CCLOG("OPENING WRONG, %d, MSG:%s",result,errMsg);
+        return false;
+    }else {
+        
+        CCLOG("result %d",result);
+    }
+    return true;
+}
+
+bool Database::execute(CCString *aSql)
+{
+    char *errorMsg;
+    
+    if (sqlite3_exec(Database::getInstance()->database, aSql->getCString(), NULL, NULL, &errorMsg) != SQLITE_OK)
+    {
+        CCString *status = CCString::createWithFormat("Error executing SQL statement: %s", errorMsg);
+        CCLOG("%s", status->getCString());
         return false;
     }
+    
     return true;
 }
 
@@ -55,6 +93,7 @@ vector<vector<string> > Database::query(char* query) {
         return results;
 }
 
-void Database::close(){
-    sqlite3_close(database);
+void Database::close()
+{
+    sqlite3_close(Database::getInstance()->database);
 }
