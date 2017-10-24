@@ -89,6 +89,9 @@ void GameLayer::initialiseDatabase() {
         sqlite3 *db = Database::getDatabase();
         if (db != nullptr){
         
+//            CCString* string = CCString::create("select letters, puzzlenum from wordbounce where puzzlenum < 100000000 order by random() limit <number of puzzles that you want>");
+//            isSuccess = 
+//            
         }
     }
     
